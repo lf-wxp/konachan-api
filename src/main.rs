@@ -1,22 +1,28 @@
-// #![feature(proc_macro_hygiene, decl_macro)]
+#![feature(proc_macro_hygiene, decl_macro)]
+#[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_contrib;
 
-// #[macro_use] extern crate rocket;
-
-// #[get("/")]
-// fn index() -> &'static str {
-//     "Hello, world!"
-// }
-
-// fn main() {
-//     rocket::ignite().mount("/", routes![index]).launch();
-// }
 mod lib;
 mod conf;
 
-use lib::get_post;
+use rocket::http::Status;
+use lib:: {get_post, ApiResponse };
 use conf::API;
 
+#[get("/post/<page>")]
+fn post(page: i8) -> ApiResponse {
+    match get_post(API, page) {
+        Ok(data) => ApiResponse {
+            json: json!(data),
+            status: Status::Ok,
+        },
+        Err(_) => ApiResponse {
+            json: json!({ "error": "internal error"}),
+            status: Status::UnprocessableEntity,
+        },
+    }
+}
+
 fn main() {
-    let resp = get_post(API, 22);
-    println!("{:#?}", resp);
+    rocket::ignite().mount("/", routes![post]).launch();
 }

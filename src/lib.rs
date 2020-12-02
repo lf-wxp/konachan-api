@@ -1,7 +1,13 @@
 use reqwest;
 use roxmltree;
+use serde::{ Serialize, Deserialize };
+use rocket::http::{ContentType, Status};
+use rocket::request::Request;
+use rocket::response;
+use rocket::response::{Responder, Response};
+use rocket_contrib::json::JsonValue;
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Image {
     url: String,
     width: i32,
@@ -15,7 +21,23 @@ pub struct Image {
     tags: String,
     safe: bool,
 }
+
 #[derive(Debug)]
+pub struct ApiResponse {
+    pub json: JsonValue,
+    pub status: Status,
+}
+
+impl<'r> Responder<'r> for ApiResponse {
+    fn respond_to(self, req: &Request) -> response::Result<'r> {
+        Response::build_from(self.json.respond_to(&req).unwrap())
+            .status(self.status)
+            .header(ContentType::JSON)
+            .ok()
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Post {
     count: i32,
     images: Vec<Image>,
