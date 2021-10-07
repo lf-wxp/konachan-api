@@ -1,28 +1,41 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-#[macro_use] extern crate rocket;
-#[macro_use] extern crate rocket_contrib;
+#[macro_use]
+extern crate rocket;
+use rocket::response::status::NotFound;
+use rocket::{serde::json::Json};
 
-mod lib;
 mod conf;
+mod lib;
 
-use rocket::http::Status;
-use lib:: {get_post, ApiResponse };
 use conf::API;
+use lib::{get_post, ApiResponse, get_image, ImageResponse};
 
 #[get("/post/<page>")]
-fn post(page: i8) -> ApiResponse {
-    match get_post(API, page) {
-        Ok(data) => ApiResponse {
-            json: json!(data),
-            status: Status::Ok,
-        },
-        Err(_) => ApiResponse {
-            json: json!({ "error": "internal error"}),
-            status: Status::UnprocessableEntity,
-        },
+async fn post(page: i8) -> Json<ApiResponse> {
+    match get_post(API, page).await {
+        Ok(data) => Json(ApiResponse {
+            data: Some(data),
+            code: 0,
+        }),
+        Err(_) => Json(ApiResponse {
+            data: None,
+            code: 1,
+        }),
     }
 }
 
-fn main() {
-    rocket::ignite().mount("/", routes![post]).launch();
+#[get("/image?<url>")]
+async fn image(url: String) -> Result<ImageResponse, NotFound<String>> {
+    match get_image(url).await {
+        Ok(data) => Ok(ImageResponse { data }),
+        Err(err) => { 
+            print!("error, {:?}", err.status());
+            Err(NotFound(String::from("error")))
+        }
+    }
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build().mount("/", routes![post])
+     .mount("/", routes![image])
 }
