@@ -1,6 +1,6 @@
 [package]
 authors = ["wxp"]
-edition = "2018"
+edition = "2021"
 name = "konachan-api"
 version = "0.1.0"
 
