@@ -28,6 +28,7 @@ pub struct Image {
 pub struct ApiResponse {
   pub data: Option<Post>,
   pub code: u8,
+  pub msg: Option<String>,
 }
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Post {

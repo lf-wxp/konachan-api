@@ -7,26 +7,29 @@ use log::{error};
 mod conf;
 mod lib;
 mod fairing;
+mod guard;
 
 use conf::API;
 use lib::{get_image, get_post, ApiResponse, ImageResponse};
 
 #[get("/post/<page>")]
-async fn post(page: i8) -> Json<ApiResponse> {
+async fn post(page: i8, key: guard::ApiKey<'_>) -> Json<ApiResponse> {
   match get_post(API, page).await {
     Ok(data) => Json(ApiResponse {
       data: Some(data),
+      msg: None,
       code: 0,
     }),
-    Err(_) => Json(ApiResponse {
+    Err(err) => Json(ApiResponse {
       data: None,
       code: 1,
+      msg: Some(err.to_string())
     }),
   }
 }
 
 #[get("/image?<url>")]
-async fn image(url: String) -> Result<ImageResponse, BadRequest<String>> {
+async fn image(url: String, key: guard::ApiKey<'_>) -> Result<ImageResponse, BadRequest<String>> {
   match get_image(url).await {
     Ok(data) => Ok(ImageResponse { data }),
     Err(err) => {
