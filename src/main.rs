@@ -1,20 +1,20 @@
 #[macro_use]
 extern crate rocket;
-use rocket::response::status::{BadRequest};
+use log::error;
+use rocket::response::status::BadRequest;
 use rocket::serde::json::Json;
-use log::{error};
 
 mod conf;
-mod lib;
 mod fairing;
 mod guard;
+mod lib;
 
 use conf::API;
 use lib::{get_image, get_post, ApiResponse, ImageResponse};
 
-#[get("/post/<page>")]
-async fn post(page: i8, key: guard::ApiKey<'_>) -> Json<ApiResponse> {
-  match get_post(API, page).await {
+#[get("/post?<page>&<tags>")]
+async fn post(page: String, tags: String, key: guard::ApiKey<'_>) -> Json<ApiResponse> {
+  match get_post(API, page, tags).await {
     Ok(data) => Json(ApiResponse {
       data: Some(data),
       msg: None,
@@ -23,7 +23,7 @@ async fn post(page: i8, key: guard::ApiKey<'_>) -> Json<ApiResponse> {
     Err(err) => Json(ApiResponse {
       data: None,
       code: 1,
-      msg: Some(err.to_string())
+      msg: Some(err.to_string()),
     }),
   }
 }

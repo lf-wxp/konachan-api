@@ -1,5 +1,5 @@
 use rocket::http::Status;
-use rocket::request::{Outcome, Request, FromRequest};
+use rocket::request::{FromRequest, Outcome, Request};
 
 use crate::conf::API_KEY;
 

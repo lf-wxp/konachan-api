@@ -61,11 +61,15 @@ pub fn attr_to_int(e: roxmltree::Node, attr: &str) -> i32 {
     .unwrap()
 }
 
-pub async fn get_post(url: &str, page: i8) -> Result<Post, Box<dyn std::error::Error>> {
+pub async fn get_post(
+  url: &str,
+  page: String,
+  tags: String,
+) -> Result<Post, Box<dyn std::error::Error>> {
   let client = reqwest::Client::new();
   let resp = client
     .get(url)
-    .query(&[("page", page)])
+    .query(&[("page", page), ("tags", tags)])
     .send()
     .await?
     .text()
