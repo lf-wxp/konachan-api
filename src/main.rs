@@ -29,7 +29,7 @@ async fn post(page: String, tags: String, key: guard::ApiKey<'_>) -> Json<ApiRes
 }
 
 #[get("/image?<url>")]
-async fn image(url: String, key: guard::ApiKey<'_>) -> Result<ImageResponse, BadRequest<String>> {
+async fn image(url: String) -> Result<ImageResponse, BadRequest<String>> {
   match get_image(url).await {
     Ok(data) => Ok(ImageResponse { data }),
     Err(err) => {
