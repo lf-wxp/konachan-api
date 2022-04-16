@@ -11,6 +11,7 @@ use std::io::Cursor;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Image {
+  id: usize,
   url: String,
   width: i32,
   height: i32,
@@ -21,7 +22,7 @@ pub struct Image {
   sample_width: i32,
   sample_height: i32,
   tags: String,
-  safe: bool,
+  security: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -82,13 +83,14 @@ pub fn parse(xml: String) -> Post {
   let elem = doc.descendants();
   let mut count = 0;
   let mut images: Vec<Image> = vec![];
-  for e in elem {
+  for (idx, e) in elem.enumerate() {
     match e.tag_name().name() {
       "posts" => {
         count = attr_to_int(e, "count");
       }
       "post" => {
         images.push(Image {
+          id: idx, 
           url: e.attribute("file_url").unwrap().to_string(),
           width: attr_to_int(e, "width"),
           height: attr_to_int(e, "height"),
@@ -99,7 +101,7 @@ pub fn parse(xml: String) -> Post {
           sample_width: attr_to_int(e, "sample_width"),
           sample_height: attr_to_int(e, "sample_height"),
           tags: e.attribute("tags").unwrap().to_string(),
-          safe: e.attribute("rating").unwrap() == "s",
+          security: e.attribute("rating").unwrap() == "s",
         });
       }
       _ => {}
