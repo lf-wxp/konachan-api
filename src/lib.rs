@@ -1,5 +1,6 @@
 use bytes::Bytes;
 use reqwest;
+use rocket::http::RawStr;
 use rocket::response::{self, Responder, Response};
 use rocket::{
   http::ContentType,
@@ -11,7 +12,7 @@ use std::io::Cursor;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Image {
-  id: usize,
+  id: i32,
   url: String,
   width: i32,
   height: i32,
@@ -23,6 +24,7 @@ pub struct Image {
   sample_height: i32,
   tags: String,
   security: bool,
+  name: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -56,10 +58,13 @@ pub async fn get_image(url: String) -> Result<Bytes, reqwest::Error> {
 
 pub fn attr_to_int(e: roxmltree::Node, attr: &str) -> i32 {
   e.attribute(attr)
-    .unwrap()
+    .unwrap_or("")
     .to_string()
     .parse::<i32>()
-    .unwrap()
+    .unwrap_or(0)
+}
+pub fn attr_to_string(e: roxmltree::Node, attr: &str) -> String {
+  e.attribute(attr).unwrap_or("").to_string()
 }
 
 pub async fn get_post(
@@ -83,25 +88,29 @@ pub fn parse(xml: String) -> Post {
   let elem = doc.descendants();
   let mut count = 0;
   let mut images: Vec<Image> = vec![];
-  for (idx, e) in elem.enumerate() {
+  for e in elem {
     match e.tag_name().name() {
       "posts" => {
         count = attr_to_int(e, "count");
       }
       "post" => {
+        let url = e.attribute("file_url").unwrap_or("");
+        let encoded_name = url.split("/").last().unwrap_or("");
+        let name = RawStr::new(encoded_name).url_decode().unwrap().to_string();
         images.push(Image {
-          id: idx, 
-          url: e.attribute("file_url").unwrap().to_string(),
+          id: attr_to_int(e, "id"),
+          url: url.to_string(),
           width: attr_to_int(e, "width"),
           height: attr_to_int(e, "height"),
-          preview: e.attribute("preview_url").unwrap().to_string(),
+          preview: attr_to_string(e, "preview_url"),
           preview_width: attr_to_int(e, "preview_width"),
           preview_height: attr_to_int(e, "preview_height"),
-          sample: e.attribute("sample_url").unwrap().to_string(),
+          sample: attr_to_string(e, "sample_url"),
           sample_width: attr_to_int(e, "sample_width"),
           sample_height: attr_to_int(e, "sample_height"),
-          tags: e.attribute("tags").unwrap().to_string(),
-          security: e.attribute("rating").unwrap() == "s",
+          tags: attr_to_string(e, "tags"),
+          security: attr_to_string(e, "rating") == "s",
+          name,
         });
       }
       _ => {}
