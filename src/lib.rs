@@ -70,12 +70,13 @@ pub fn attr_to_string(e: roxmltree::Node, attr: &str) -> String {
 pub async fn get_post(
   url: &str,
   page: String,
+  limit: String,
   tags: String,
 ) -> Result<Post, Box<dyn std::error::Error>> {
   let client = reqwest::Client::new();
   let resp = client
     .get(url)
-    .query(&[("page", page), ("tags", tags)])
+    .query(&[("page", page), ("limit", limit), ("tags", tags)])
     .send()
     .await?
     .text()

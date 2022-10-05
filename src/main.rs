@@ -12,9 +12,9 @@ mod lib;
 use conf::API;
 use lib::{get_image, get_post, ApiResponse, ImageResponse};
 
-#[get("/post?<page>&<tags>")]
-async fn post(page: String, tags: String, key: guard::ApiKey<'_>) -> Json<ApiResponse> {
-  match get_post(API, page, tags).await {
+#[get("/post?<page>&<limit>&<tags>")]
+async fn post(page: String, limit: String, tags: String, _key: guard::ApiKey<'_>) -> Json<ApiResponse> {
+  match get_post(API, page, limit, tags).await {
     Ok(data) => Json(ApiResponse {
       data: Some(data),
       msg: None,
