@@ -1,9 +1,15 @@
-# konachan-api
 
-konachan data api in rust
+# Description
 
+## konachan-api
+konachan data api in rust with rocket framework
 
-# cli
-```shell
+# Installation
+```bash
+cargo build
+```
+
+# Cli
+```bash
   CORS_ORIGIN=domain.com,domain2.com konachan-api
 ```
