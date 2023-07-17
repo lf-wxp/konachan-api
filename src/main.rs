@@ -1,16 +1,16 @@
 #[macro_use]
 extern crate rocket;
-use log::error;
 use rocket::response::status::BadRequest;
 use rocket::serde::json::Json;
+use log::error;
 
 mod conf;
+mod utils;
 mod fairing;
 mod guard;
-mod lib;
 
 use conf::API;
-use lib::{get_image, get_post, ApiResponse, ImageResponse};
+use utils::{get_image, get_post, ApiResponse, ImageResponse};
 
 #[get("/post?<page>&<limit>&<tags>")]
 async fn post(page: String, limit: String, tags: String, _key: guard::ApiKey<'_>) -> Json<ApiResponse> {
