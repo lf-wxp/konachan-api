@@ -34,7 +34,7 @@ async fn image(url: String) -> Result<ImageResponse, BadRequest<String>> {
     Ok(data) => Ok(ImageResponse { data }),
     Err(err) => {
       error!("error, {:?}", err.status());
-      Err(BadRequest(Some(String::from("the image url can't access"))))
+      Err(BadRequest(String::from("the image url can't access")))
     }
   }
 }
