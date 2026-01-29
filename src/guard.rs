@@ -4,7 +4,8 @@ use rocket::request::{FromRequest, Outcome, Request};
 use crate::conf::API_KEY;
 
 #[derive(Debug)]
-pub struct ApiKey<'r>(&'r str);
+#[allow(dead_code)]
+pub struct ApiKey<'r>(pub &'r str);
 
 #[derive(Debug)]
 pub enum ApiKeyError {

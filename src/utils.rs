@@ -1,13 +1,10 @@
 use bytes::Bytes;
-use reqwest;
-use rocket::http::RawStr;
 use rocket::response::{self, Responder, Response};
 use rocket::{
   http::ContentType,
   serde::{Deserialize, Serialize},
   Request,
 };
-use roxmltree;
 use std::io::Cursor;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -52,43 +49,53 @@ impl<'r> Responder<'r, 'static> for ImageResponse {
   }
 }
 
-pub async fn get_image(url: String) -> Result<Bytes, reqwest::Error> {
-  Ok(reqwest::get(url).await?.bytes().await?)
+pub async fn get_image(url: &str) -> Result<Bytes, reqwest::Error> {
+  let response = reqwest::get(url).await?;
+  let bytes: Bytes = response.bytes().await?;
+  Ok(bytes)
 }
 
 pub fn attr_to_int(e: roxmltree::Node, attr: &str) -> i32 {
   e.attribute(attr)
     .unwrap_or("")
-    .to_string()
     .parse::<i32>()
     .unwrap_or(0)
 }
+
 pub fn attr_to_string(e: roxmltree::Node, attr: &str) -> String {
   e.attribute(attr).unwrap_or("").to_string()
 }
 
 pub async fn get_post(
   url: &str,
-  page: String,
-  limit: String,
-  tags: String,
+  page: &str,
+  limit: &str,
+  tags: &str,
 ) -> Result<Post, Box<dyn std::error::Error>> {
   let client = reqwest::Client::new();
-  let resp = client
-    .get(url)
-    .query(&[("page", page), ("limit", limit), ("tags", tags)])
+  
+  // 手动构建查询参数
+  let query_params = format!("page={}&limit={}&tags={}", page, limit, tags);
+  let full_url = if url.contains('?') {
+    format!("{}&{}", url, query_params)
+  } else {
+    format!("{}?{}", url, query_params)
+  };
+  
+  let resp: reqwest::Response = client
+    .get(&full_url)
     .send()
-    .await?
-    .text()
     .await?;
-  Ok(parse(resp.to_string()))
+  let text: String = resp.text().await?;
+  Ok(parse(text)?)
 }
 
-pub fn parse(xml: String) -> Post {
-  let doc = roxmltree::Document::parse(&xml).unwrap();
+pub fn parse(xml: String) -> Result<Post, roxmltree::Error> {
+  let doc = roxmltree::Document::parse(&xml)?;
   let elem = doc.descendants();
   let mut count = 0;
-  let mut images: Vec<Image> = vec![];
+  let mut images: Vec<Image> = Vec::with_capacity(10); // 预分配容量
+  
   for e in elem {
     match e.tag_name().name() {
       "posts" => {
@@ -96,8 +103,12 @@ pub fn parse(xml: String) -> Post {
       }
       "post" => {
         let url = e.attribute("file_url").unwrap_or("");
-        let encoded_name = url.split("/").last().unwrap_or("");
-        let name = RawStr::new(encoded_name).url_decode().unwrap().to_string();
+        let encoded_name = url.split('/').next_back().unwrap_or("");
+        let name = percent_encoding::percent_decode_str(encoded_name)
+          .decode_utf8()
+          .unwrap_or_default()
+          .to_string();
+        
         images.push(Image {
           id: attr_to_int(e, "id"),
           url: url.to_string(),
@@ -117,5 +128,6 @@ pub fn parse(xml: String) -> Post {
       _ => {}
     }
   }
-  Post { count, images }
+  
+  Ok(Post { count, images })
 }
