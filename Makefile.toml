@@ -1,0 +1,95 @@
+[config]
+skip_core_tasks = true
+
+[tasks.default]
+alias = "build"
+
+[tasks.build]
+description = "Build the project in release mode"
+command = "cargo"
+args = ["build", "--release"]
+
+[tasks.dev]
+description = "Build the project in debug mode"
+command = "cargo"
+args = ["build"]
+
+[tasks.run]
+description = "Run the application"
+dependencies = ["build"]
+env = { "ROCKET_ADDRESS" = "0.0.0.0", "ROCKET_PORT" = "8000" }
+command = "cargo"
+args = ["run", "--release"]
+
+[tasks.run-dev]
+description = "Run the application in debug mode"
+dependencies = ["dev"]
+env = { "ROCKET_ADDRESS" = "0.0.0.0", "ROCKET_PORT" = "8000" }
+command = "cargo"
+args = ["run"]
+
+[tasks.test]
+description = "Run tests"
+command = "cargo"
+args = ["test"]
+
+[tasks.check]
+description = "Check the project for errors"
+command = "cargo"
+args = ["check"]
+
+[tasks.clippy]
+description = "Run clippy for linting"
+command = "cargo"
+args = ["clippy", "--", "-D", "warnings"]
+
+[tasks.fmt]
+description = "Format the code"
+command = "cargo"
+args = ["fmt"]
+
+[tasks.fmt-check]
+description = "Check code formatting"
+command = "cargo"
+args = ["fmt", "--", "--check"]
+
+[tasks.clean]
+description = "Clean build artifacts"
+command = "cargo"
+args = ["clean"]
+
+[tasks.docker-build]
+description = "Build Docker image"
+command = "docker"
+args = ["build", "-t", "konachan-api", "."]
+
+[tasks.docker-run]
+description = "Run Docker container"
+dependencies = ["docker-stop"]
+command = "docker"
+args = ["run", "-d", "--name", "konachan-api", "-p", "8000:8000", "konachan-api"]
+
+[tasks.docker-stop]
+description = "Stop Docker container"
+script = [
+  "docker rm -f konachan-api 2>/dev/null || true"
+]
+
+[tasks.docker-rm]
+description = "Remove Docker container"
+command = "docker"
+args = ["rm", "konachan-api"]
+
+[tasks.docker-clean]
+description = "Clean up Docker container and image"
+dependencies = ["docker-stop", "docker-rm"]
+command = "docker"
+args = ["rmi", "konachan-api"]
+
+[tasks.lint]
+description = "Run all linting checks"
+dependencies = ["fmt-check", "clippy"]
+
+[tasks.ci]
+description = "Run CI tasks"
+dependencies = ["check", "test", "lint"]
