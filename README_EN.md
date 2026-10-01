@@ -134,13 +134,13 @@ curl -H "x-api-key: konachan-api" \
     "images": [
       {
         "id": 12345,
-        "url": "https://konachan.net/image/test.jpg",
+        "url": "https://konachan.com/image/test.jpg",
         "width": 1920,
         "height": 1080,
-        "preview": "https://konachan.net/preview/test.jpg",
+        "preview": "https://konachan.com/preview/test.jpg",
         "preview_width": 150,
         "preview_height": 84,
-        "sample": "https://konachan.net/sample/test.jpg",
+        "sample": "https://konachan.com/sample/test.jpg",
         "sample_width": 1500,
         "sample_height": 844,
         "tags": "landscape nature sky",
@@ -190,7 +190,7 @@ curl -H "x-api-key: konachan-api" \
 
 ```bash
 # Proxy access to Konachan image
-curl "http://localhost:8000/image?url=https://konachan.net/sample/xxx.jpg"
+curl "http://localhost:8000/image?url=https://konachan.com/sample/xxx.jpg"
 ```
 
 **Response:**
@@ -398,7 +398,7 @@ This project is open sourced under the MIT License - see the [LICENSE](LICENSE) 
 
 ## 🙏 Acknowledgments
 
-- [Konachan](https://konachan.net/) - Provides the original API and data
+- [Konachan](https://konachan.com/) - Provides the original API and data
 - [Rocket](https://rocket.rs/) - Excellent Rust web framework
 - [Rust Community](https://www.rust-lang.org/community) - Provides outstanding ecosystem support
 

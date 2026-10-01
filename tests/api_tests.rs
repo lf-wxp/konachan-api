@@ -14,7 +14,7 @@ mod tests {
   // Test API URL constant
   #[test]
   fn test_api_url_constant() {
-    let expected_url = "https://konachan.net/post.xml";
+    let expected_url = "https://konachan.com/post.xml";
     assert!(expected_url.starts_with("https://"));
     assert!(expected_url.ends_with(".xml"));
   }

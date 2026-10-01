@@ -126,13 +126,13 @@ curl -H "x-api-key: konachan-api" \
     "images": [
       {
         "id": 12345,
-        "url": "https://konachan.net/image/test.jpg",
+        "url": "https://konachan.com/image/test.jpg",
         "width": 1920,
         "height": 1080,
-        "preview": "https://konachan.net/preview/test.jpg",
+        "preview": "https://konachan.com/preview/test.jpg",
         "preview_width": 150,
         "preview_height": 84,
-        "sample": "https://konachan.net/sample/test.jpg",
+        "sample": "https://konachan.com/sample/test.jpg",
         "sample_width": 1500,
         "sample_height": 844,
         "tags": "landscape nature sky",
@@ -182,7 +182,7 @@ curl -H "x-api-key: konachan-api" \
 
 ```bash
 # 代理访问 Konachan 图片
-curl "http://localhost:8000/image?url=https://konachan.net/sample/xxx.jpg"
+curl "http://localhost:8000/image?url=https://konachan.com/sample/xxx.jpg"
 ```
 
 **响应:**
@@ -408,7 +408,7 @@ cargo tarpaulin --out html
 
 ## 🙏 致谢
 
-- [Konachan](https://konachan.net/) - 提供原始 API 和数据
+- [Konachan](https://konachan.com/) - 提供原始 API 和数据
 - [Rocket](https://rocket.rs/) - 优秀的 Rust Web 框架
 - [Rust 社区](https://www.rust-lang.org/community) - 提供出色的生态支持
 

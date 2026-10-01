@@ -98,8 +98,8 @@ mod config_tests {
   fn test_api_constant() {
     // The API constant should point to konachan
     assert_eq!(
-      "https://konachan.net/post.xml",
-      "https://konachan.net/post.xml"
+      "https://konachan.com/post.xml",
+      "https://konachan.com/post.xml"
     );
   }
 
@@ -117,21 +117,21 @@ mod url_tests {
   #[test]
   fn test_url_building_with_special_characters() {
     // Test that special characters in tags are properly encoded
-    let mut url = Url::parse("https://konachan.net/post.xml").unwrap();
+    let mut url = Url::parse("https://konachan.com/post.xml").unwrap();
     {
       let mut query_pairs = url.query_pairs_mut();
       query_pairs.append_pair("tags", "hello world");
     }
     assert_eq!(
       url.as_str(),
-      "https://konachan.net/post.xml?tags=hello+world"
+      "https://konachan.com/post.xml?tags=hello+world"
     );
   }
 
   #[test]
   fn test_url_building_with_japanese_characters() {
     // Test that Unicode characters are properly encoded
-    let mut url = Url::parse("https://konachan.net/post.xml").unwrap();
+    let mut url = Url::parse("https://konachan.com/post.xml").unwrap();
     {
       let mut query_pairs = url.query_pairs_mut();
       query_pairs.append_pair("tags", "日本語");
@@ -142,7 +142,7 @@ mod url_tests {
   #[test]
   fn test_url_building_with_multiple_params() {
     // Test building URL with multiple query parameters
-    let mut url = Url::parse("https://konachan.net/post.xml").unwrap();
+    let mut url = Url::parse("https://konachan.com/post.xml").unwrap();
     {
       let mut query_pairs = url.query_pairs_mut();
       query_pairs.append_pair("page", "1");

@@ -138,13 +138,13 @@ mod tests {
 <posts count="2">
   <post
     id="12345"
-    file_url="https://konachan.net/image/test%20image.jpg"
+    file_url="https://konachan.com/image/test%20image.jpg"
     width="1920"
     height="1080"
-    preview_url="https://konachan.net/preview/test.jpg"
+    preview_url="https://konachan.com/preview/test.jpg"
     preview_width="150"
     preview_height="84"
-    sample_url="https://konachan.net/sample/test.jpg"
+    sample_url="https://konachan.com/sample/test.jpg"
     sample_width="1500"
     sample_height="844"
     tags="tag1 tag2 tag3"
@@ -152,13 +152,13 @@ mod tests {
   />
   <post
     id="67890"
-    file_url="https://konachan.net/image/another.png"
+    file_url="https://konachan.com/image/another.png"
     width="1280"
     height="720"
-    preview_url="https://konachan.net/preview/another.png"
+    preview_url="https://konachan.com/preview/another.png"
     preview_width="150"
     preview_height="84"
-    sample_url="https://konachan.net/sample/another.png"
+    sample_url="https://konachan.com/sample/another.png"
     sample_width="850"
     sample_height="478"
     tags="landscape nature"
@@ -197,13 +197,13 @@ mod tests {
     let first_image = &result.images[0];
 
     assert_eq!(first_image.id, 12345);
-    assert_eq!(first_image.url, "https://konachan.net/image/test%20image.jpg");
+    assert_eq!(first_image.url, "https://konachan.com/image/test%20image.jpg");
     assert_eq!(first_image.width, 1920);
     assert_eq!(first_image.height, 1080);
-    assert_eq!(first_image.preview, "https://konachan.net/preview/test.jpg");
+    assert_eq!(first_image.preview, "https://konachan.com/preview/test.jpg");
     assert_eq!(first_image.preview_width, 150);
     assert_eq!(first_image.preview_height, 84);
-    assert_eq!(first_image.sample, "https://konachan.net/sample/test.jpg");
+    assert_eq!(first_image.sample, "https://konachan.com/sample/test.jpg");
     assert_eq!(first_image.sample_width, 1500);
     assert_eq!(first_image.sample_height, 844);
     assert_eq!(first_image.tags, "tag1 tag2 tag3");
